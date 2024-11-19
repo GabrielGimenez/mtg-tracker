@@ -16,6 +16,10 @@ export function DeckForm({ players }: DeckFormProps) {
   const [colorIdentity, setColorIdentity] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState("");
 
+  if (!players || players.length === 0) {
+    return <div>No players available. Please add players first.</div>;
+  }
+
   const playerOptions = players.map((player) => ({
     value: player.id.toString(),
     label: player.name,
@@ -28,7 +32,6 @@ export function DeckForm({ players }: DeckFormProps) {
     try {
       await createDeck(formData);
       toast.success("Deck created successfully!");
-      // Reset form
       setColorIdentity("");
       setSelectedPlayer("");
       (document.getElementById("deck-form") as HTMLFormElement).reset();
