@@ -1,11 +1,16 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   login: () => void;
-  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -13,11 +18,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch("/api/check-auth");
+      const data = await response.json();
+      setIsAuthenticated(data.authenticated);
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+    }
+  };
+
+  const login = () => {
+    setIsAuthenticated(true);
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login }}>
       {children}
     </AuthContext.Provider>
   );
