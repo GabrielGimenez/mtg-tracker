@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name      String
+  decks     Deck[]
+}
+
+model Deck {
+  id            Int         @id @default(autoincrement())
+  commander     String
+  partner       String?
+  companion     String?
+  colorIdentity String
+  moxfieldUrl   String?
+  createdAt     DateTime    @default(now())
+  playerId      Int
+  player        Player      @relation(fields: [playerId], references: [id])
+  matches       MatchDeck[]
+}
+
+model Match {
+  id        Int         @id @default(autoincrement())
+  turns     Int
+  notes     String?     @db.Text
+  createdAt DateTime    @default(now())
+  decks     MatchDeck[]
+}
+
+model MatchDeck {
+  id       Int     @id @default(autoincrement())
+  position Int
+  isWinner Boolean @default(false)
+  matchId  Int
+  match    Match   @relation(fields: [matchId], references: [id])
+  deckId   Int
+  deck     Deck    @relation(fields: [deckId], references: [id])
+}
