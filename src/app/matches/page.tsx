@@ -3,12 +3,13 @@ import { MatchForm } from "@/components/forms/match-form";
 import { MatchFilters } from "@/components/match-filters";
 import { MatchList } from "@/components/match-list";
 
-export default async function MatchesPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | undefined };
-}) {
-  const { playerId, deckId, players, dateFrom, dateTo } = searchParams;
+interface Props {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function MatchesPage(props: Props) {
+  const params = await props.searchParams;
+  const { playerId, deckId, players, dateFrom, dateTo } = params;
 
   const where = {
     AND: [
@@ -17,7 +18,7 @@ export default async function MatchesPage({
             decks: {
               some: {
                 deck: {
-                  playerId: parseInt(playerId),
+                  playerId: parseInt(playerId as string),
                 },
               },
             },
@@ -27,7 +28,7 @@ export default async function MatchesPage({
         ? {
             decks: {
               some: {
-                deckId: parseInt(deckId),
+                deckId: parseInt(deckId as string),
               },
             },
           }
@@ -35,21 +36,21 @@ export default async function MatchesPage({
       players
         ? {
             decks: {
-              _count: parseInt(players),
+              _count: parseInt(players as string),
             },
           }
         : {},
       dateFrom
         ? {
             createdAt: {
-              gte: new Date(dateFrom),
+              gte: new Date(dateFrom as string),
             },
           }
         : {},
       dateTo
         ? {
             createdAt: {
-              lte: new Date(dateTo),
+              lte: new Date(dateTo as string),
             },
           }
         : {},

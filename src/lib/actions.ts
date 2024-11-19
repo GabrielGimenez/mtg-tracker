@@ -11,7 +11,7 @@ export async function createPlayer(formData: FormData) {
   });
 
   revalidatePath("/players");
-  return player;
+  return;
 }
 
 export async function createDeck(formData: FormData) {
