@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/nav";
+import { AuthProvider } from "@/context/AuthContext";
+import AuthWrapper from "@/components/AuthWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,8 +20,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="min-h-screen bg-gray-100">
-          <Nav />
-          <main className="container mx-auto px-4 py-8">{children}</main>
+          <AuthProvider>
+            <AuthWrapper>
+              <Nav />
+              <main className="container mx-auto px-4 py-8">{children}</main>
+            </AuthWrapper>
+          </AuthProvider>
         </div>
       </body>
     </html>
